@@ -1,18 +1,21 @@
-<!-- Project Description-->
-# Project Setup
+# Assignment
 
-1. git clone https://github.com/somnath-cispl/assignment.git
-2. npm install
-3. npm start
-4. open the index.html in browser.
+## Installation
+```sh
+git clone https://github.com/somnath-cispl/assignment.git
+cd assignment/
+npm install
+npm start
+```
+Open the index.html in browser
 
-# Admin Login
+## Admin Login Credentials
 
 Email : admin@codeclouds.in
 Password : password123
 
 
-# User Login
+## User Login Credentials
 
 Email : user@codeclouds.in
 Password : password123
