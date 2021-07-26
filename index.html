@@ -1,0 +1,219 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<a href="javascript:void(0);" id="logoutBtn" style="display:none;"> Logout</a>
+<div id="loginDiv" style="display:none;">
+	Email: <input type="text" name="email" id="email"/>
+	Password: <input type="text" name="password" id="password"/>
+	<input type="button" id="submitbtn" value="login"/>
+</div>
+<div id="locationDiv" style="display:none;">
+	Enter city: <input type="text" name="city" id="city"/>
+	<input type="button" id="updateBtn" value="Update" style="display:none;"/>
+	<input type="button" id="searchBtn" value="Search" style="display:none;"/>
+</div>
+<div id="msgDiv"></div>
+</body>
+<script>
+$( document ).ready(function() {
+	// validate token
+	let token = (localStorage.getItem("authtoken")) ? localStorage.getItem("authtoken") : '';
+	if(token){
+		$.ajax({
+			url: "http://127.0.01:3000/api/validate-token",
+			type: 'POST',
+			crossDomain: true,
+			dataType: 'json',
+			data: '',
+			headers: {
+				"Authorization":"Bearer "+token
+			},
+			success: function(result){
+				if(result.status){
+					$('#loginDiv').hide();
+					$('#locationDiv').show();
+					$('#logoutBtn').show();
+					if(result.data.user.type == 'admin'){
+						$('#searchBtn').hide();
+						$('#updateBtn').show();
+					}else if(result.data.user.type == 'user'){
+						$('#searchBtn').show();
+						$('#updateBtn').hide();
+					}
+				}else{
+					$('#loginDiv').show();
+					$('#locationDiv').hide();
+					$('#searchBtn').hide();
+					$('#updateBtn').hide();
+					$('#logoutBtn').hide();
+				}
+			}
+		});
+	}else{
+		$('#logoutBtn').hide();
+		$('#loginDiv').show();
+	}
+	
+	
+	//login functionality
+	$("#submitbtn").click(function(e){
+		e.preventDefault();
+		$('#msgDiv').html('<h4>Please wait....</h4>');
+		let email = $("#email").val();
+		let password = $("#password").val();
+		$.ajax({
+			url: "http://127.0.01:3000/api/login",
+			type: 'POST',
+			crossDomain: true,
+			dataType: 'json',
+			data: {email:email, password:password},
+			success: function(result){
+				if(result.status){
+				$('#msgDiv').html('');
+				localStorage.setItem("authtoken", result.data.token);
+				token = result.data.token;
+					if(result.data.user.type == 'admin'){
+						$('#loginDiv').hide();
+						$('#searchBtn').hide();
+						$('#locationDiv').show();
+						$('#updateBtn').show();
+						$('#logoutBtn').show();
+					}else if(result.data.user.type == 'user'){
+						$('#loginDiv').hide();
+						$('#searchBtn').hide();
+						$('#locationDiv').show();
+						$('#searchBtn').show();
+						$('#logoutBtn').show();
+					}
+				}else{
+					$('#msgDiv').html('<h4>'+result.message+'</h4>');
+				}
+			}
+		});
+	});
+	
+	//update location functionality
+	$("#updateBtn").click(function(e){
+		e.preventDefault();
+		$('#msgDiv').html('<h4>Please wait....</h4>');
+		let city = $("#city").val();
+		if(city != ''){
+			$.ajax({
+				url: 'http://api.positionstack.com/v1/forward',
+				data: {
+				  access_key: 'b7a47029820d6f36ef5e7b622f4c363a',
+				  query: city,
+				  limit: 1
+				}
+			}).done(function(apiResp) {
+				if(typeof apiResp.data != 'undefined'){
+				let lat = apiResp.data[0].latitude;
+				let lng = apiResp.data[0].longitude;
+					$.ajax({
+						url: "http://127.0.01:3000/api/location-update",
+						type: 'PUT',
+						crossDomain: true,
+						dataType: 'json',
+						data: {city:city, lat:lat,lng:lng},
+						headers: {
+							"Authorization":"Bearer "+token
+						},
+						success: function(result){
+							if(result.status){
+								$('#msgDiv').html('');
+								$('#msgDiv').html('<h4>'+result.message+'</h4>');
+							}else{
+								$('#msgDiv').html('<h4>'+result.message+'</h4>');
+							}
+						}
+					});
+				}else{
+					$('#msgDiv').html('<h4>Location is not valid</h4>');
+				}
+			});
+		}else{
+			$('#msgDiv').html('<h4>Please enter a city</h4>');
+		}
+	});
+	
+	//Search Location functionality
+	$("#searchBtn").click(function(e){
+		e.preventDefault();
+		$('#msgDiv').html('<h4>Please wait....</h4>');
+		let city = $("#city").val();
+		if(city != ''){
+			$.ajax({
+				url: 'http://api.positionstack.com/v1/forward',
+				data: {
+				  access_key: 'b7a47029820d6f36ef5e7b622f4c363a',
+				  query: city,
+				  limit: 1
+				}
+			}).done(function(apiResp) {
+				if(typeof apiResp.data[0] != 'undefined'){
+					let lat = apiResp.data[0].latitude;
+					let lng = apiResp.data[0].longitude;
+					$.ajax({
+						url: "http://127.0.01:3000/api/location-search",
+						type: 'POST',
+						crossDomain: true,
+						dataType: 'json',
+						data: {city:city, lat:lat,lng:lng},
+						headers: {
+							"Authorization":"Bearer "+token
+						},
+						success: function(result){
+							if(result.status){
+								if(result.data.result){
+									$('#msgDiv').html('');
+									$('#msgDiv').html('<h4>city in 100 KM</h4>');
+								}else{
+									$('#msgDiv').html('');
+									$('#msgDiv').html('<h4>city not in 100 KM</h4>');
+								}
+							}else{
+								$('#msgDiv').html('');
+								$('#msgDiv').html('<h4>'+result.message+'</h4>');
+							}
+						}
+					});
+				}else{
+					$('#msgDiv').html('<h4>Location is not valid</h4>');
+				}
+			});
+		}else{
+			$('#msgDiv').html('<h4>Please enter a city</h4>');
+		}
+	});
+	
+	//logout
+	$("#logoutBtn").click(function(e){
+		e.preventDefault();
+		$('#msgDiv').html('<h4>Please wait....</h4>');
+		$.ajax({
+			url: "http://127.0.01:3000/api/logout",
+			type: 'POST',
+			crossDomain: true,
+			dataType: 'json',
+			data: '',
+			headers: {
+				"Authorization":"Bearer "+token
+			},
+			success: function(result){
+				if(result.status){
+					$('#locationDiv').hide();
+					$('#logoutBtn').hide();
+					$('#loginDiv').show();
+					$('#msgDiv').html('');
+					localStorage.removeItem("authtoken");
+				}else{
+					$('#msgDiv').html('<h4>'+result.message+'</h4>');
+				}
+			}
+		});
+	});
+});
+</script>
+</html>
