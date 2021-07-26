@@ -205,6 +205,8 @@ $( document ).ready(function() {
 				if(result.status){
 					$('#locationDiv').hide();
 					$('#logoutBtn').hide();
+					$('#searchBtn').hide();
+					$('#updateBtn').hide();
 					$('#loginDiv').show();
 					$('#msgDiv').html('');
 					localStorage.removeItem("authtoken");
