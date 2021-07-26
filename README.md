@@ -3,8 +3,14 @@
 ## Installation
 ```sh
 git clone https://github.com/somnath-cispl/assignment.git
+```
+```sh
 cd assignment/
+```
+```sh
 npm install
+```
+```sh
 npm start
 ```
 Open the index.html in browser
