@@ -15,6 +15,24 @@ exports.update = async (req, res) => {
  });
 }
 
+exports.getLocation = async (req, res) => {
+ let locationDetails;
+ locationDetails = await Location.findById('60fc63e127e34b31db7371c5');
+ if(locationDetails){
+	 return res.status(200).json({
+	  status: true,
+	  message: "",
+	  data: locationDetails
+	 });
+ }else{
+	return res.status(200).json({
+	   status: true,
+	   message: "",
+	   data:""
+	});
+ }
+}
+
 exports.search = async (req, res) => {
  let locationDetails;
  locationDetails = await Location.findById('60fc63e127e34b31db7371c5');

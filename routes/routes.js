@@ -9,6 +9,7 @@ const router = express.Router();
 router.route('/login').post(authController.login);
 router.route('/logout').post(authController.logout);
 router.route('/location-update').put(authController.authorizeAdmin, locationController.update);
+router.route('/get-location').get(authController.authorizeAdmin, locationController.getLocation);
 router.route('/location-search').post(authController.authorizeUser, locationController.search);
 router.route('/validate-token').post(authController.validateToken);
 

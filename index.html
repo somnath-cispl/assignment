@@ -36,8 +36,23 @@ $( document ).ready(function() {
 					$('#locationDiv').show();
 					$('#logoutBtn').show();
 					if(result.data.user.type == 'admin'){
-						$('#searchBtn').hide();
-						$('#updateBtn').show();
+						$.ajax({
+							url: "http://127.0.01:3000/api/get-location",
+							type: 'GET',
+							crossDomain: true,
+							dataType: 'json',
+							data: '',
+							headers: {
+								"Authorization":"Bearer "+token
+							},
+							success: function(result){
+								if(result.status){
+									$('#city').val(result.data.city);
+									$('#searchBtn').hide();
+									$('#updateBtn').show();
+								}
+							}
+						});
 					}else if(result.data.user.type == 'user'){
 						$('#searchBtn').show();
 						$('#updateBtn').hide();
@@ -75,12 +90,28 @@ $( document ).ready(function() {
 				localStorage.setItem("authtoken", result.data.token);
 				token = result.data.token;
 					if(result.data.user.type == 'admin'){
-						$('#loginDiv').hide();
-						$('#searchBtn').hide();
-						$('#locationDiv').show();
-						$('#updateBtn').show();
-						$('#logoutBtn').show();
+						$.ajax({
+							url: "http://127.0.01:3000/api/get-location",
+							type: 'GET',
+							crossDomain: true,
+							dataType: 'json',
+							data: '',
+							headers: {
+								"Authorization":"Bearer "+token
+							},
+							success: function(result){
+								if(result.status){
+									$('#city').val(result.data.city);
+									$('#loginDiv').hide();
+									$('#searchBtn').hide();
+									$('#locationDiv').show();
+									$('#updateBtn').show();
+									$('#logoutBtn').show();
+								}
+							}
+						});
 					}else if(result.data.user.type == 'user'){
+						$('#city').val('');
 						$('#loginDiv').hide();
 						$('#searchBtn').hide();
 						$('#locationDiv').show();
