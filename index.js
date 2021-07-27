@@ -5,6 +5,8 @@ const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config({path: './config.env'});
+app.set('views', __dirname + '/views');
+app.engine('html', require('ejs').renderFile);
 const DB = process.env.DB;
 
 mongoose.connect(DB,{
@@ -29,4 +31,9 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization");
     next();
 });
+
+app.get('/', function(req, res) {
+	res.render('index.html');
+});
+
 app.use('/api', router);
