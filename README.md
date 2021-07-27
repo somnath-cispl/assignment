@@ -13,7 +13,7 @@ npm install
 ```sh
 npm start
 ```
-Open the index.html in browser
+Open http://localhost:3000/ in browser
 
 ## Admin Login Credentials
 
