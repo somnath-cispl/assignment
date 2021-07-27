@@ -22,7 +22,7 @@ $( document ).ready(function() {
 	let token = (localStorage.getItem("authtoken")) ? localStorage.getItem("authtoken") : '';
 	if(token){
 		$.ajax({
-			url: "http://127.0.01:3000/api/validate-token",
+			url: "api/validate-token",
 			type: 'POST',
 			crossDomain: true,
 			dataType: 'json',
@@ -37,7 +37,7 @@ $( document ).ready(function() {
 					$('#logoutBtn').show();
 					if(result.data.user.type == 'admin'){
 						$.ajax({
-							url: "http://127.0.01:3000/api/get-location",
+							url: "api/get-location",
 							type: 'GET',
 							crossDomain: true,
 							dataType: 'json',
@@ -79,7 +79,7 @@ $( document ).ready(function() {
 		let email = $("#email").val();
 		let password = $("#password").val();
 		$.ajax({
-			url: "http://127.0.01:3000/api/login",
+			url: "api/login",
 			type: 'POST',
 			crossDomain: true,
 			dataType: 'json',
@@ -91,7 +91,7 @@ $( document ).ready(function() {
 				token = result.data.token;
 					if(result.data.user.type == 'admin'){
 						$.ajax({
-							url: "http://127.0.01:3000/api/get-location",
+							url: "api/get-location",
 							type: 'GET',
 							crossDomain: true,
 							dataType: 'json',
@@ -143,7 +143,7 @@ $( document ).ready(function() {
 				let lat = apiResp.data[0].latitude;
 				let lng = apiResp.data[0].longitude;
 					$.ajax({
-						url: "http://127.0.01:3000/api/location-update",
+						url: "api/location-update",
 						type: 'PUT',
 						crossDomain: true,
 						dataType: 'json',
@@ -187,7 +187,7 @@ $( document ).ready(function() {
 					let lat = apiResp.data[0].latitude;
 					let lng = apiResp.data[0].longitude;
 					$.ajax({
-						url: "http://127.0.01:3000/api/location-search",
+						url: "api/location-search",
 						type: 'POST',
 						crossDomain: true,
 						dataType: 'json',
@@ -224,7 +224,7 @@ $( document ).ready(function() {
 		e.preventDefault();
 		$('#msgDiv').html('<h4>Please wait....</h4>');
 		$.ajax({
-			url: "http://127.0.01:3000/api/logout",
+			url: "api/logout",
 			type: 'POST',
 			crossDomain: true,
 			dataType: 'json',
